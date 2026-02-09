@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>DataSynth.जनन — Docs</title>
+<style>
+  /* ======================= THEME ======================= */
+  :root {
+    --bg: #0b0f19;           /* near-black */
+    --panel: #0a0e18;        /* darker panel */
+    --ink: #a7f3d0;          /* mint green text */
+    --ink-dim: #6ee7b7;      /* lighter green */
+    --ink-faint: #34d399;    /* accent green */
+    --comment: #58a66f;      /* comment green */
+    --rule: rgba(52,211,153,.20);
+    --cursor: #22c55e;
+    --link: #86efac;
+    --shadow: 0 10px 40px rgba(0,0,0,.45);
+    --mono: ui-monospace,SFMono-Regular,Menlo,Monaco,"Liberation Mono","Courier New",monospace;
+
+    --sidebar-bg: #08101b;
+    --sidebar-border: rgba(148,163,184,.18);
+    --sidebar-link: #9ae6b4;
+    --sidebar-active: #22c55e;
+  }
+  .light {
+    --bg: #f8fafc;
+    --panel: #ffffff;
+    --ink: #0f172a;
+    --ink-dim: #334155;
+    --ink-faint: #0369a1;
+    --comment: #16a34a;
+    --rule: rgba(2,6,23,.10);
+    --cursor: #0ea5e9;
+    --link: #0ea5e9;
+    --shadow: 0 10px 30px rgba(2,6,23,.08);
+
+    --sidebar-bg: #ffffff;
+    --sidebar-border: rgba(2,6,23,.12);
+    --sidebar-link: #0f172a;
+    --sidebar-active: #0ea5e9;
+  }
+
+  /* ======================= BASE ======================= */
+  * { box-sizing: border-box }
+  html, body { height: 100% }
+  html { scroll-behavior: smooth } /* smooth scroll for anchors */
+  body {
+    margin: 0;
+    background: radial-gradient(1000px 500px at 50% -20%, #101826 0%, var(--bg) 60%) fixed;
+    color: var(--ink);
+    font-family: var(--mono);
+  }
+
+  /* ======================= TOP BAR ======================= */
+  .topbar {
+    position: sticky; top: 0; z-index: 30;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 14px 18px;
+    background: linear-gradient(180deg, rgba(2,6,23,.65), rgba(2,6,23,.35));
+    border-bottom: 1px solid var(--rule);
+    backdrop-filter: blur(6px);
+  }
+  .brand { display: flex; align-items: center; gap: 10px; font-weight: 800; letter-spacing: .3px }
+  .badge { font-size: 12px; padding: 2px 8px; border-radius: 999px; border: 1px solid var(--rule); color: var(--ink-dim) }
+  .controls { display: flex; align-items: center; gap: 10px }
+  .btn {
+    appearance: none; border: 1px solid var(--rule); background: transparent;
+    color: var(--ink); padding: 8px 12px; border-radius: 10px; cursor: pointer;
+  }
+  .btn:hover { filter: brightness(1.1) }
+  .toggle { display: inline-flex; gap: 6px; align-items: center; user-select: none }
+
+  /* ======================= LAYOUT ======================= */
+  .layout {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    gap: 18px;
+    max-width: 1200px;
+    margin: 18px auto;
+    padding: 0 16px;
+  }
+  @media (max-width: 900px) {
+    .layout { grid-template-columns: 1fr; }
+    .sidebar { position: static; max-height: none }
+  }
+
+  /* ======================= SIDEBAR (TOC) ======================= */
+  .sidebar {
+    position: sticky; top: 76px; align-self: start;
+    background: var(--sidebar-bg);
+    border: 1px solid var(--sidebar-border);
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    padding: 14px;
+    max-height: calc(100vh - 100px);
+    overflow: auto;
+  }
+  .toc-title { font-weight: 800; color: var(--ink-faint); margin-bottom: 8px }
+  .toc { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px }
+  .toc a {
+    color: var(--sidebar-link);
+    text-decoration: none;
+    display: block; padding: 8px 10px; border-radius: 8px;
+    border: 1px dashed transparent;
+  }
+  .toc a:hover { border-color: var(--sidebar-border) }
+  .toc a.active {
+    color: var(--sidebar-active);
+    border-color: var(--sidebar-active);
+    background: color-mix(in hsl, var(--sidebar-active) 10%, transparent);
+  }
+  .toc small { color: var(--ink-dim) }
+
+  /* ======================= EDITOR-LIKE DOC ======================= */
+  .editor {
+    background: var(--panel);
+    border: 1px solid var(--rule);
+    border-radius: 14px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+  .editor-hdr {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 14px;
+    border-bottom: 1px dashed var(--rule);
+    color: var(--ink-dim);
+  }
+  .filename { color: var(--ink-faint); font-weight: 700 }
+  .code-wrap { display: grid; grid-template-columns: 62px 1fr; }
+  .gutter {
+    background: color-mix(in hsl, var(--panel), black 10%);
+    border-right: 1px dashed var(--rule);
+    color: var(--comment);
+    padding: 12px 8px;
+    white-space: pre;
+    user-select: none;
+  }
+  .code { padding: 14px 16px; white-space: pre-wrap; word-break: break-word; }
+  .code ::selection { background: rgba(34,197,94,.2) }
+  .line { display: block; min-height: 20px; scroll-margin-top: 84px } /* anchor offset */
+  .cmt { color: var(--comment) }
+  .kv  { color: var(--ink-dim) }
+  .val { color: var(--ink) }
+  .sec { color: var(--ink-faint); font-weight: 700; text-decoration: underline dotted }
+  .hr  { border-bottom: 1px dashed var(--rule); margin: 10px 0 }
+
+  /* Caret for the currently typed headline */
+  .typing::after {
+    content: ' ';
+    border-right: 2px solid var(--cursor);
+    animation: blink 1.05s steps(1) infinite;
+    margin-left: 2px;
+  }
+  @keyframes blink { 0%,50%{opacity:1} 51%,100%{opacity:0} }
+
+  /* Footer */
+  .foot { color: var(--ink-dim); text-align:center; padding: 14px; margin-top: 18px }
+</style>
+</head>
+<body>
+
+  <!-- ======================= TOPBAR ======================= -->
+  <header class="topbar">
+    <div class="brand">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+        <path d="M4 8a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2.5A2.5 2.5 0 0 1 9.5 13H6a2 2 0 0 1-2-2V8zm8 5a2 2 0 0 1 2-2h4.5a2 2 0 0 1 2 2v2.5a2 2 0 0 1-2 2H14a2 2 0 0 1-2-2V13z"/>
+      </svg>
+      <span>DataSynth.जनन</span>
+      <span class="badge">docs</span>
+    </div>
+    <div class="controls">
+      <label class="toggle">
+        <input id="themeToggle" type="checkbox" aria-label="Toggle light theme" />
+        <span>Light theme</span>
+      </label>
+    </div>
+  </header>
+
+  <!-- ======================= LAYOUT ======================= -->
+  <main class="layout">
+
+    <!-- ---------- SIDEBAR / TOC ---------- -->
+    <aside class="sidebar" aria-label="Table of Contents">
+      <div class="toc-title">Sections</div>
+      <ul class="toc">
+        <li><a href="#sec-intro" data-target="sec-intro">1. Introduction</a></li>
+        <li><a href="#sec-how" data-target="sec-how">2. How it Works</a></li>
+        <li><a href="#sec-future" data-target="sec-future">3. Future Additions</a></li>
+        <li><a href="#sec-conclusion" data-target="sec-conclusion">4. Conclusion</a></li>
+      </ul>
+      <div style="margin-top:10px">
+        <small>Click to jump • Active section is highlighted as you scroll</small>
+      </div>
+    </aside>
+
+    <!-- ---------- EDITOR-LIKE DOC ---------- -->
+    <section class="editor" aria-label="Code-styled documentation">
+      <div class="editor-hdr">
+        <div class="filename">/docs/datasynth.जनन</div>
+        <div>read-only</div>
+      </div>
+
+      <div class="code-wrap">
+        <!-- Line numbers -->
+        <pre class="gutter" aria-hidden="true" id="gutter"></pre>
+
+        <!-- Content -->
+        <div class="code" id="code">
+<span class="line cmt"># DataSynth.जनन — AI + Web Assisted Synthetic Data Generator</span>
+<span class="line"></span>
+
+<!-- INTRO -->
+<span id="sec-intro" class="line cmt"># 1) INTRODUCTION</span>
+<span class="line"><span class="kv">project</span>: <span class="val">"DataSynth.जनन"</span></span>
+<span class="line"><span class="kv">purpose</span>: <span class="val">"Generate high‑quality, privacy‑safe synthetic datasets from simple natural‑language descriptions."</span></span>
+<span class="line"><span class="kv">audience</span>: <span class="val">["Data Scientists","Analysts","Students","Developers","ML Engineers"]</span></span>
+<span class="line"><span class="kv">approach</span>: <span class="val">"Hybrid AI (LLMs) + web‑grounded knowledge → realistic & consistent data"</span></span>
+<span class="line cmt"># goals: reduce reliance on sensitive data; accelerate dataset creation; provide explainability</span>
+<span class="line hr"></span>
+
+<!-- HOW IT WORKS -->
+<span id="sec-how" class="line cmt"># 2) HOW IT WORKS</span>
+<span class="line"><span class="sec">## 2.1 User Input (Frontend)</span></span>
+<span class="line"><span class="kv">input.demographic</span>: <span class="val">"hi_IN | en_US | ja_JP | …"</span></span>
+<span class="line"><span class="kv">input.description</span>: <span class="val">"dataset of students in a school (upto 1000 character description)"</span></span>
+<span class="line"><span class="kv">source.mode</span>: <span class="val">"ai | web"</span></span>
+<span class="line"></span>
+
+<span class="line"><span class="sec">## 2.2 Schema Suggestion</span></span>
+<span class="line"><span class="kv">ai_schema</span>: <span class="val">"LLM infers relevant fields; captures implicit attributes"</span></span>
+<span class="line"><span class="kv">web_schema</span>: <span class="val">"Web sources (e.g., Wikipedia patterns) suggest domain‑accurate fields"</span></span>
+<span class="line cmt">// Example fields: ["student_id","student_name","class","subject","score","exam_date"]</span>
+<span class="line"></span>
+
+<span class="line"><span class="sec">## 2.3 Dependency Inference</span></span>
+<span class="line"><span class="kv">graph.parents</span>: <span class="val">{ "score":["class","subject"], "grade":["score"] }</span></span>
+<span class="line"><span class="kv">validation</span>: <span class="val">"Acyclic, consistent, domain‑aware checks"</span></span>
+<span class="line"></span>
+
+<span class="line"><span class="sec">## 2.4 Data Generation (Engine)</span></span>
+<span class="line"><span class="kv">mode.ai</span>: <span class="val">"LLM creates semantically coherent rows (uses dependencies)"</span></span>
+<span class="line"><span class="kv">mode.web</span>: <span class="val">"Web‑grounded values & distributions for realism"</span></span>
+<span class="line"><span class="kv">fallbacks</span>: <span class="val">"Hybrid fallbacks ensure generation succeeds"</span></span>
+<span class="line"></span>
+
+<span class="line"><span class="sec">## 2.5 Post‑Generation Intelligence</span></span>
+<span class="line"><span class="kv">visual_suggestions</span>: <span class="val">["bar","line","scatter","area","pie","radar"] with grouping/aggregations</span></span>
+<span class="line"><span class="kv">table_suggestions</span>: <span class="val">["Top students by subject","Attendance vs performance","Students at risk"]</span></span>
+<span class="line"><span class="kv">reasoning</span>: <span class="val">"Explains field choices, dependency effects, and quality score"</span></span>
+<span class="line"></span>
+
+<span class="line"><span class="sec">## 2.6 Output (Frontend)</span></span>
+<span class="line"><span class="kv">dataset.table</span>: <span class="val">"Editable grid with CSV export"</span></span>
+<span class="line"><span class="kv">charts</span>: <span class="val">"AI‑suggested visuals to explore data quickly"</span></span>
+<span class="line"><span class="kv">explainability</span>: <span class="val">"Human‑readable reasoning for trust & audits"</span></span>
+<span class="line hr"></span>
+
+<!-- FUTURE -->
+<span id="sec-future" class="line cmt"># 3) FUTURE ADDITIONS</span>
+<span class="line"><span class="kv">Imputation</span>: <span class="val">["Able to transform , clean the data files (CSV & XLSX )"]</span></span>
+<span class="line"><span class="kv">advanced_generation</span>: <span class="val">["Conditional distributions","Time‑series","Multi‑table relational"]</span></span>
+<span class="line"><span class="kv">enterprise_compliance</span>: <span class="val">["Differential privacy","Risk scoring","Domain templates"]</span></span>
+<span class="line"><span class="kv">analytics_export</span>: <span class="val">["SQL","Parquet","DuckDB","Built‑in dashboards"]</span></span>
+<span class="line"><span class="kv">ai_enhancements</span>: <span class="val">["refined models","Bias & fairness tests","Anomaly injection"]</span></span>
+<span class="line"><span class="kv">platform</span>: <span class="val">["Accounts","Collaboration","Public API"]</span></span>
+<span class="line"></span>
+
+<!-- CONCLUSION -->
+<span id="sec-conclusion" class="line cmt"># 4) CONCLUSION</span>
+<span class="line"><span class="kv">summary</span>: <span class="val">"From idea → schema → data → insight, with explainability at every step."</span></span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot">Toggle theme anytime · Click TOC headers to navigate</footer>
+
+<script>
+  // ======================= THEME TOGGLE =======================
+  const toggle = document.getElementById('themeToggle');
+  const LS_KEY = 'datasynth-docs-theme';
+  const stored = localStorage.getItem(LS_KEY);
+  if (stored === 'light') {
+    document.documentElement.classList.add('light');
+    toggle.checked = true;
+  }
+  toggle.addEventListener('change', () => {
+    if (toggle.checked) {
+      document.documentElement.classList.add('light');
+      localStorage.setItem(LS_KEY, 'light');
+    } else {
+      document.documentElement.classList.remove('light');
+      localStorage.setItem(LS_KEY, 'dark');
+    }
+  });
+
+  // ======================= LINE NUMBERS =======================
+  function numberLines() {
+    const code = document.getElementById('code').innerText.split('\n').length;
+    document.getElementById('gutter').textContent =
+      Array.from({length: code}, (_,i)=> String(i+1)).join('\n');
+  }
+  numberLines();
+  window.addEventListener('resize', numberLines);
+
+  // ======================= TOC ACTIVE HIGHLIGHT =======================
+  const sectionIds = ['sec-intro','sec-how','sec-future','sec-conclusion'];
+  const links = Array.from(document.querySelectorAll('.toc a'));
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const id = entry.target.id;
+        links.forEach(a => a.classList.toggle('active', a.dataset.target === id));
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px', threshold: 0.01 });
+
+  sectionIds.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) observer.observe(el);
+  });
+  links.forEach(a => a.addEventListener('click', () => {
+    links.forEach(x => x.classList.remove('active'));
+    a.classList.add('active');
+  }));
+
+  // ======================= DYNAMIC TYPING FOR '#' LINES =======================
+  // Finds all code lines that begin with '#', preserves their text, then types them out.
+  (function typeHashHeadlinesOnce(){
+    // Only once per tab session; remove the next 2 lines if you want it every reload.
+    if (sessionStorage.getItem('typed-headers-done') === '1') return;
+
+    const allLines = Array.from(document.querySelectorAll('#code .line'));
+    const targets = allLines.filter(line => line.textContent.trim().startsWith('#'));
+    if (!targets.length) return;
+
+    // store original text and clear for typing
+    targets.forEach(el => {
+      el.dataset.full = el.textContent;  // keep the intended text
+      el.textContent = '';               // blank to start typing
+    });
+
+    // type each target sequentially
+    const baseDelay = 18;      // ms per character
+    const gapBetween = 220;    // ms gap between lines
+
+    const typeLine = (el, done) => {
+      const txt = el.dataset.full || '';
+      let i = 0;
+      el.classList.add('typing');    // show caret
+      const timer = setInterval(() => {
+        el.textContent = txt.slice(0, i);
+        i++;
+        if (i > txt.length) {
+          clearInterval(timer);
+          el.classList.remove('typing');
+          setTimeout(done, gapBetween);
+        }
+      }, baseDelay);
+    };
+
+    // chain typing in sequence
+    let idx = 0;
+    const next = () => {
+      if (idx >= targets.length) {
+        sessionStorage.setItem('typed-headers-done','1'); // mark complete
+        return;
+      }
+      typeLine(targets[idx++], next);
+    };
+    next();
+  })();
+</script>
+</body>
+</html>
