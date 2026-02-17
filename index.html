@@ -1,109 +1,105 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>DataSynth.जनन — Docs</title>
 <style>
-  /* ======================= THEME ======================= */
   :root {
-    --bg: #0b0f19;           /* near-black */
-    --panel: #0a0e18;        /* darker panel */
-    --ink: #a7f3d0;          /* mint green text */
-    --ink-dim: #6ee7b7;      /* lighter green */
-    --ink-faint: #34d399;    /* accent green */
-    --comment: #58a66f;      /* comment green */
+    --bg: #0b0f19;
+    --panel: #0a0e18;
+    --ink: #a7f3d0;
+    --ink-dim: #6ee7b7;
+    --ink-faint: #34d399;
+    --comment: #58a66f;
     --rule: rgba(52,211,153,.20);
     --cursor: #22c55e;
     --link: #86efac;
     --shadow: 0 10px 40px rgba(0,0,0,.45);
     --mono: ui-monospace,SFMono-Regular,Menlo,Monaco,"Liberation Mono","Courier New",monospace;
-
     --sidebar-bg: #08101b;
     --sidebar-border: rgba(148,163,184,.18);
     --sidebar-link: #9ae6b4;
     --sidebar-active: #22c55e;
+    --track: rgba(52,211,153,.18);
+    --dot: #16a34a;
+    --dot-muted: rgba(148,163,184,.25);
+    --card: #0b1220;
+    --arrow: #22c55e;
+    --tbl-line: rgba(52,211,153,.25);
+    --tbl-head: color-mix(in hsl, var(--ink-faint) 35%, transparent);
+    --ok: #22c55e;
+    --no: #ef4444;
+    --maybe: #eab308;
   }
   .light {
-    --bg: #f8fafc;
-    --panel: #ffffff;
-    --ink: #0f172a;
-    --ink-dim: #334155;
-    --ink-faint: #0369a1;
-    --comment: #16a34a;
-    --rule: rgba(2,6,23,.10);
-    --cursor: #0ea5e9;
-    --link: #0ea5e9;
-    --shadow: 0 10px 30px rgba(2,6,23,.08);
-
-    --sidebar-bg: #ffffff;
-    --sidebar-border: rgba(2,6,23,.12);
-    --sidebar-link: #0f172a;
-    --sidebar-active: #0ea5e9;
+    --bg: #f8fafc; --panel: #ffffff; --ink: #0f172a; --ink-dim: #334155;
+    --ink-faint: #0369a1; --comment: #16a34a; --rule: rgba(2,6,23,.10);
+    --cursor: #0ea5e9; --link: #0ea5e9; --shadow: 0 10px 30px rgba(2,6,23,.08);
+    --sidebar-bg: #ffffff; --sidebar-border: rgba(2,6,23,.12);
+    --sidebar-link: #0f172a; --sidebar-active: #0ea5e9;
+    --track: rgba(14,165,233,.18); --dot: #0ea5e9; --dot-muted: rgba(2,6,23,.15);
+    --card: #ffffff; --arrow: #0ea5e9;
+    --tbl-line: rgba(2,6,23,.12); --ok: #0ea5e9; --no: #b91c1c; --maybe: #ca8a04;
   }
-
-  /* ======================= BASE ======================= */
   * { box-sizing: border-box }
   html, body { height: 100% }
-  html { scroll-behavior: smooth } /* smooth scroll for anchors */
+  html { scroll-behavior: smooth }
   body {
     margin: 0;
-    background: radial-gradient(1000px 500px at 50% -20%, #101826 0%, var(--bg) 60%) fixed;
+    background: var(--bg);
     color: var(--ink);
     font-family: var(--mono);
   }
+  a { color: var(--link); text-decoration: none }
+  [id] { scroll-margin-top: 84px; }
 
-  /* ======================= TOP BAR ======================= */
+  /* TOPBAR */
   .topbar {
     position: sticky; top: 0; z-index: 30;
     display: flex; justify-content: space-between; align-items: center;
-    padding: 14px 18px;
+    padding: 12px 18px;
     background: linear-gradient(180deg, rgba(2,6,23,.65), rgba(2,6,23,.35));
     border-bottom: 1px solid var(--rule);
     backdrop-filter: blur(6px);
   }
   .brand { display: flex; align-items: center; gap: 10px; font-weight: 800; letter-spacing: .3px }
-  .badge { font-size: 12px; padding: 2px 8px; border-radius: 999px; border: 1px solid var(--rule); color: var(--ink-dim) }
+  .badge { font-size: 11px; padding: 2px 8px; border-radius: 999px; border: 1px solid var(--rule); color: var(--ink-dim) }
   .controls { display: flex; align-items: center; gap: 10px }
-  .btn {
-    appearance: none; border: 1px solid var(--rule); background: transparent;
-    color: var(--ink); padding: 8px 12px; border-radius: 10px; cursor: pointer;
-  }
-  .btn:hover { filter: brightness(1.1) }
-  .toggle { display: inline-flex; gap: 6px; align-items: center; user-select: none }
+  .toggle { display: inline-flex; gap: 6px; align-items: center; user-select: none; font-size: 13px }
+  .toggle input { accent-color: var(--ink-faint) }
 
-  /* ======================= LAYOUT ======================= */
+  /* LAYOUT */
   .layout {
     display: grid;
-    grid-template-columns: 260px 1fr;
-    gap: 18px;
-    max-width: 1200px;
-    margin: 18px auto;
-    padding: 0 16px;
+    grid-template-columns: 220px 1fr;
+    gap: 14px;
+    max-width: 1180px;
+    margin: 14px auto;
+    padding: 0 14px;
   }
   @media (max-width: 900px) {
     .layout { grid-template-columns: 1fr; }
     .sidebar { position: static; max-height: none }
   }
 
-  /* ======================= SIDEBAR (TOC) ======================= */
+  /* SIDEBAR */
   .sidebar {
-    position: sticky; top: 76px; align-self: start;
+    position: sticky; top: 70px; align-self: start;
     background: var(--sidebar-bg);
     border: 1px solid var(--sidebar-border);
-    border-radius: 12px;
+    border-radius: 10px;
     box-shadow: var(--shadow);
-    padding: 14px;
-    max-height: calc(100vh - 100px);
+    padding: 12px;
+    max-height: calc(100vh - 96px);
     overflow: auto;
   }
-  .toc-title { font-weight: 800; color: var(--ink-faint); margin-bottom: 8px }
-  .toc { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px }
+  .toc-title { font-weight: 800; color: var(--ink-faint); margin-bottom: 6px; font-size: 12px }
+  .toc { list-style: none; padding: 0; margin: 0; display: grid; gap: 4px }
   .toc a {
-    color: var(--sidebar-link);
-    text-decoration: none;
-    display: block; padding: 8px 10px; border-radius: 8px;
-    border: 1px dashed transparent;
+    color: var(--sidebar-link); text-decoration: none;
+    display: block; padding: 6px 8px; border-radius: 7px;
+    border: 1px dashed transparent; font-size: 12px;
   }
   .toc a:hover { border-color: var(--sidebar-border) }
   .toc a.active {
@@ -111,60 +107,489 @@
     border-color: var(--sidebar-active);
     background: color-mix(in hsl, var(--sidebar-active) 10%, transparent);
   }
-  .toc small { color: var(--ink-dim) }
 
-  /* ======================= EDITOR-LIKE DOC ======================= */
+  /* EDITOR */
   .editor {
     background: var(--panel);
     border: 1px solid var(--rule);
-    border-radius: 14px;
+    border-radius: 12px;
     box-shadow: var(--shadow);
     overflow: hidden;
   }
   .editor-hdr {
     display: flex; align-items: center; justify-content: space-between;
-    padding: 10px 14px;
+    padding: 8px 14px;
     border-bottom: 1px dashed var(--rule);
     color: var(--ink-dim);
+    font-size: 12px;
   }
   .filename { color: var(--ink-faint); font-weight: 700 }
-  .code-wrap { display: grid; grid-template-columns: 62px 1fr; }
+  .code-wrap { display: grid; grid-template-columns: 52px 1fr; }
   .gutter {
     background: color-mix(in hsl, var(--panel), black 10%);
     border-right: 1px dashed var(--rule);
     color: var(--comment);
-    padding: 12px 8px;
+    padding: 12px 6px;
     white-space: pre;
     user-select: none;
+    font-size: 11px;
+    text-align: right;
+    padding-right: 10px;
   }
-  .code { padding: 14px 16px; white-space: pre-wrap; word-break: break-word; }
+  .code { padding: 12px 14px; white-space: pre-wrap; word-break: break-word; font-size: 13px; }
   .code ::selection { background: rgba(34,197,94,.2) }
-  .line { display: block; min-height: 20px; scroll-margin-top: 84px } /* anchor offset */
+  .line { display: block; min-height: 18px; line-height: 1.5; }
   .cmt { color: var(--comment) }
   .kv  { color: var(--ink-dim) }
   .val { color: var(--ink) }
-  .sec { color: var(--ink-faint); font-weight: 700; text-decoration: underline dotted }
-  .hr  { border-bottom: 1px dashed var(--rule); margin: 10px 0 }
-
-  /* Caret for the currently typed headline */
+  .sec { color: var(--ink-faint); font-weight: 700 }
+  .hr  { border-bottom: 1px dashed var(--rule); margin: 8px 0; height: 1px; display: block; }
   .typing::after {
-    content: ' ';
-    border-right: 2px solid var(--cursor);
-    animation: blink 1.05s steps(1) infinite;
-    margin-left: 2px;
+    content: ' '; border-right: 2px solid var(--cursor);
+    animation: blink 1.05s steps(1) infinite; margin-left: 2px;
   }
   @keyframes blink { 0%,50%{opacity:1} 51%,100%{opacity:0} }
 
-  /* Footer */
-  .foot { color: var(--ink-dim); text-align:center; padding: 14px; margin-top: 18px }
+  /* INLINE BOX */
+  .inline-box {
+    background: color-mix(in hsl, var(--ink-faint) 5%, transparent);
+    border: 1px dashed var(--rule);
+    border-radius: 10px;
+    padding: 8px;
+    margin: 4px 0;
+  }
+  .muted { color: var(--ink-dim); font-size: 11px }
+
+  /* MODE SWITCH */
+  .seg {
+    display: inline-flex; border: 1px dashed var(--rule); border-radius: 999px;
+    overflow: hidden; background: color-mix(in hsl, var(--ink-faint) 5%, transparent);
+  }
+  .seg button {
+    border: none; padding: 5px 12px; cursor: pointer; color: var(--ink);
+    background: transparent; font-family: var(--mono); font-size: 12px;
+  }
+  .seg button.active {
+    background: color-mix(in hsl, var(--ink-faint) 22%, transparent);
+    border-left: 1px solid var(--rule); border-right: 1px solid var(--rule);
+  }
+
+  /* STEPPER */
+  .stepper-wrap { position: relative; margin-top: 5px; padding-bottom: 2px; }
+  .stepper-track {
+    position: absolute; left: 20px; right: 20px; top: 19px; height: 2px;
+    background: var(--track); border-radius: 999px; pointer-events: none;
+  }
+  .stepper-fill {
+    position: absolute; left: 20px; top: 19px; height: 2px; width: 0%;
+    background: var(--ink-faint); border-radius: 999px;
+    transition: width .35s ease;
+    box-shadow: 0 0 0 2px color-mix(in hsl,var(--ink-faint) 15%, transparent);
+    pointer-events: none;
+  }
+  .stepper {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 2px;
+  }
+  .step {
+    position: relative; padding-top: 36px;
+    text-align: center; cursor: pointer;
+    user-select: none; outline: none;
+  }
+  .step .dot {
+    position: absolute; top: 8px; left: 50%; transform: translateX(-50%);
+    width: 22px; height: 22px; border-radius: 50%;
+    background: var(--dot-muted);
+    border: 2px solid color-mix(in hsl, var(--ink-faint) 35%, transparent);
+    transition: background .2s, border-color .2s, box-shadow .2s;
+  }
+  .step.active .dot, .step.done .dot {
+    background: var(--dot);
+    border-color: color-mix(in hsl, var(--dot) 55%, transparent);
+    box-shadow: 0 0 0 3px color-mix(in hsl, var(--dot) 30%, transparent);
+  }
+  .step .num {
+    position: absolute; top: 11px; left: 50%; transform: translateX(-50%);
+    font-size: 10px; color: #0b0f19; font-weight: 800; pointer-events: none;
+  }
+  .step .lbl { color: var(--ink); font-size: 10.5px; line-height: 1.25; white-space: nowrap; }
+
+  .desc {
+    margin-top: 5px; border-top: 1px dashed var(--rule); padding-top: 5px;
+    display: grid; gap: 2px;
+  }
+  .desc .title { color: var(--ink-faint); font-weight: 700; font-size: 11.5px; }
+  .desc ul { margin: 2px 0 0 0; padding-left: 15px }
+  .desc li { margin: 1px 0; color: var(--ink); font-size: 11.5px; }
+
+  .rows-ctrl {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 4px 8px; border-radius: 8px; border: 1px dashed var(--rule);
+    background: color-mix(in hsl, var(--ink-faint) 7%, transparent);
+  }
+  .rows-ctrl button {
+    width: 20px; height: 20px; border-radius: 5px; border: 1px solid var(--rule);
+    background: color-mix(in hsl, var(--panel) 60%, black 40%);
+    color: var(--ink); cursor: pointer; font-size: 14px; line-height: 1;
+  }
+  .rows-ctrl input {
+    width: 70px; text-align: right; border: none; outline: none;
+    background: transparent; color: var(--ink); font-family: var(--mono); font-size: 12px;
+  }
+
+  /* ===== FLOWCHART ARCHITECTURE — theme-aware ===== */
+
+  /* Connector color tokens */
+  :root {
+    --fc-line:  rgba(20,184,166,.70);
+    --fc-line-b: rgba(20,184,166,.55);
+    --fc-user-bg:   rgba(34,197,94,.10);
+    --fc-user-bdr:  #22c55e;
+    --fc-user-txt:  #16a34a;
+    --fc-teal-bg:   rgba(20,184,166,.12);
+    --fc-teal-bdr:  #14b8a6;
+    --fc-teal-txt:  #0d9488;
+    --fc-amber-bg:  rgba(245,158,11,.12);
+    --fc-amber-bdr: #d97706;
+    --fc-amber-txt: #b45309;
+    --fc-rose-bg:   rgba(244,63,94,.10);
+    --fc-rose-bdr:  #f43f5e;
+    --fc-rose-txt:  #e11d48;
+    --fc-mode-bg:   rgba(15,23,42,.65);
+    --fc-mode-bdr:  rgba(148,163,184,.18);
+    --fc-mode-ttl:  #e879a0;
+    --fc-mode-txt:  #94a3b8;
+    --fc-out-bg:    rgba(20,184,166,.07);
+    --fc-out-bdr:   rgba(20,184,166,.35);
+    --fc-out-ttl:   #0d9488;
+    --fc-out-txt:   #5eead4;
+    --fc-wrap-bg:   rgba(244,63,94,.05);
+    --fc-wrap-bdr:  rgba(244,63,94,.40);
+  }
+  .light {
+    --fc-line:  rgba(13,148,136,.80);
+    --fc-line-b: rgba(13,148,136,.60);
+    --fc-user-bg:   rgba(22,163,74,.10);
+    --fc-user-bdr:  #16a34a;
+    --fc-user-txt:  #14532d;
+    --fc-teal-bg:   rgba(13,148,136,.10);
+    --fc-teal-bdr:  #0d9488;
+    --fc-teal-txt:  #134e4a;
+    --fc-amber-bg:  rgba(217,119,6,.10);
+    --fc-amber-bdr: #d97706;
+    --fc-amber-txt: #78350f;
+    --fc-rose-bg:   rgba(225,29,72,.08);
+    --fc-rose-bdr:  #e11d48;
+    --fc-rose-txt:  #881337;
+    --fc-mode-bg:   rgba(240,253,250,.85);
+    --fc-mode-bdr:  rgba(13,148,136,.25);
+    --fc-mode-ttl:  #db2777;
+    --fc-mode-txt:  #334155;
+    --fc-out-bg:    rgba(13,148,136,.07);
+    --fc-out-bdr:   rgba(13,148,136,.35);
+    --fc-out-ttl:   #0d9488;
+    --fc-out-txt:   #134e4a;
+    --fc-wrap-bg:   rgba(253,242,248,.80);
+    --fc-wrap-bdr:  rgba(225,29,72,.35);
+  }
+
+  .fc {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-family: var(--mono);
+    font-size: 11px;
+    gap: 0;
+  }
+
+  /* ── connector arrows ── */
+  .fc-arrow { display: flex; flex-direction: column; align-items: center; }
+  .fc-arrow .shaft { width: 2px; height: 10px; background: var(--fc-line); }
+  .fc-arrow .head  {
+    width: 0; height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 7px solid var(--fc-line);
+  }
+
+  /* ── fork: line down then splits left+right ── */
+  .fc-fork {
+    display: flex; align-items: flex-start; width: 100%;
+  }
+  .fc-fork .left  {
+    flex: 1;
+    height: 12px;
+    border-top:   2px solid var(--fc-line-b);
+    border-right: 2px solid var(--fc-line-b);
+    border-radius: 0 4px 0 0;
+  }
+  .fc-fork .right {
+    flex: 1;
+    height: 12px;
+    border-top:  2px solid var(--fc-line-b);
+    border-left: 2px solid var(--fc-line-b);
+    border-radius: 4px 0 0 0;
+  }
+
+  /* ── join: two sides converge back to center ── */
+  .fc-join {
+    display: flex; align-items: flex-end; width: 100%;
+  }
+  .fc-join .left  {
+    flex: 1; height: 12px;
+    border-bottom: 2px solid var(--fc-line-b);
+    border-right:  2px solid var(--fc-line-b);
+    border-radius: 0 0 4px 0;
+  }
+  .fc-join .right {
+    flex: 1; height: 12px;
+    border-bottom: 2px solid var(--fc-line-b);
+    border-left:   2px solid var(--fc-line-b);
+    border-radius: 0 0 0 4px;
+  }
+
+  /* ── 3-way fan out ── */
+  .fc-fan3 { display: flex; align-items: flex-start; width: 100%; }
+  .fc-fan3 .seg-l {
+    flex: 1; height: 14px;
+    border-top:   2px solid var(--fc-line-b);
+    border-right: 2px solid var(--fc-line-b);
+    border-radius: 0 4px 0 0;
+  }
+  .fc-fan3 .seg-m { width: 2px; background: var(--fc-line-b); height: 14px; }
+  .fc-fan3 .seg-r {
+    flex: 1; height: 14px;
+    border-top:  2px solid var(--fc-line-b);
+    border-left: 2px solid var(--fc-line-b);
+    border-radius: 4px 0 0 0;
+  }
+
+  /* ── nodes ── */
+  .fc-node {
+    border-radius: 8px;
+    padding: 7px 16px;
+    text-align: center;
+    line-height: 1.4;
+    border: 1.5px solid;
+    font-size: 11.5px;
+    white-space: nowrap;
+  }
+  .fc-node.user {
+    background: var(--fc-user-bg);
+    border-color: var(--fc-user-bdr);
+    color: var(--fc-user-txt);
+    font-weight: 800;
+  }
+  .fc-node.teal {
+    background: var(--fc-teal-bg);
+    border-color: var(--fc-teal-bdr);
+    color: var(--fc-teal-txt);
+  }
+  .fc-node.amber {
+    background: var(--fc-amber-bg);
+    border-color: var(--fc-amber-bdr);
+    color: var(--fc-amber-txt);
+    font-weight: 700;
+  }
+
+  /* ── full-width 2-col branch pair ── */
+  .fc-pair {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    width: 100%;
+  }
+  .fc-pair > div {
+    border-radius: 8px;
+    padding: 8px 12px;
+    text-align: center;
+    line-height: 1.4;
+    border: 1.5px solid;
+    font-size: 11px;
+  }
+  .fc-pair > div.teal {
+    background: var(--fc-teal-bg);
+    border-color: var(--fc-teal-bdr);
+    color: var(--fc-teal-txt);
+  }
+  .fc-pair > div.rose {
+    background: var(--fc-rose-bg);
+    border-color: var(--fc-rose-bdr);
+    color: var(--fc-rose-txt);
+  }
+
+  /* ── Field Generation Modes wrapper ── */
+  .fc-modes-wrap {
+    width: 100%;
+    background: var(--fc-wrap-bg);
+    border: 1.5px dashed var(--fc-wrap-bdr);
+    border-radius: 12px;
+    padding: 10px;
+  }
+  .fc-modes-title {
+    text-align: center;
+    color: var(--fc-mode-ttl);
+    font-weight: 800;
+    font-size: 11px;
+    letter-spacing: .8px;
+    margin-bottom: 8px;
+  }
+  .fc-modes-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+  }
+  .fc-mode-card {
+    background: var(--fc-mode-bg);
+    border: 1px solid var(--fc-mode-bdr);
+    border-radius: 8px;
+    padding: 8px 6px;
+    text-align: center;
+  }
+  .fc-mode-card strong {
+    display: block;
+    color: var(--fc-mode-ttl);
+    font-size: 10.5px;
+    margin-bottom: 4px;
+    line-height: 1.25;
+  }
+  .fc-mode-card span {
+    color: var(--fc-mode-txt);
+    font-size: 9.5px;
+    line-height: 1.4;
+  }
+
+  /* ── output cards ── */
+  .fc-outs {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+    width: 100%;
+  }
+  .fc-out {
+    background: var(--fc-out-bg);
+    border: 1.5px solid var(--fc-out-bdr);
+    border-radius: 9px;
+    padding: 10px 8px;
+    text-align: center;
+  }
+  .fc-out strong {
+    display: block;
+    color: var(--fc-out-ttl);
+    font-size: 11.5px;
+    font-weight: 700;
+    margin-bottom: 3px;
+  }
+  .fc-out span {
+    color: var(--fc-out-txt);
+    font-size: 10px;
+  }
+
+  /* 3 drop shafts row — align to output card centers */
+  .fc-drops {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    width: 100%;
+  }
+  .fc-drops .fc-arrow { justify-self: center; }
+
+  @media (max-width: 640px) {
+    .fc-modes-grid { grid-template-columns: repeat(2,1fr); }
+    .fc-outs { grid-template-columns: 1fr; }
+    .fc-pair { grid-template-columns: 1fr; }
+    .fc-fork, .fc-join, .fc-fan3 { width: 100%; }
+    .fc-drops { padding: 0 5%; }
+  }
+
+  /* COMPARISON TABLE */
+  .compare-wrap { margin-top: 6px; overflow-x: auto; }
+  table.compare {
+    width: 100%; border-collapse: separate; border-spacing: 0;
+    font-family: var(--mono); font-size: 11.5px; color: var(--ink);
+    background: color-mix(in hsl, var(--panel) 92%, black 8%);
+    border: 1px dashed var(--tbl-line); border-radius: 8px; overflow: hidden;
+  }
+  .compare thead, .compare tbody, .compare tr { display: table; width: 100%; table-layout: fixed; }
+  .compare thead tr > th:first-child, .compare tbody tr > td:first-child {
+    width: 28%; text-align: left; white-space: normal; overflow-wrap: anywhere;
+  }
+  .compare thead tr > th:not(:first-child), .compare tbody tr > td:not(:first-child) {
+    width: calc(72% / 5); text-align: center; white-space: nowrap;
+  }
+  .compare thead th {
+    position: sticky; top: 0; z-index: 1;
+    background: color-mix(in hsl, var(--panel) 92%, black 8%);
+    color: var(--tbl-head); font-weight: 700;
+    padding: 7px 8px; line-height: 1.2;
+    border-bottom: 1px dashed var(--tbl-line);
+  }
+  .compare tbody td {
+    padding: 6px 8px; line-height: 1.2;
+    vertical-align: middle; border-bottom: 1px dashed var(--tbl-line);
+  }
+  .compare tbody tr:last-child td { border-bottom: none; }
+  .compare thead th:not(:last-child), .compare tbody td:not(:last-child) {
+    border-right: 1px dashed var(--tbl-line);
+  }
+  .compare .ok    { color: var(--ok);    font-weight: 700 }
+  .compare .no    { color: var(--no);    font-weight: 700 }
+  .compare .maybe { color: var(--maybe); font-weight: 700 }
+  .legend { color: var(--ink-dim); margin-top: 4px; font-size: 10.5px }
+
+  /* LIGHT MODE OVERRIDES */
+  .light body { background: #f0fdf4; }
+  .light .topbar {
+    background: rgba(240,253,244,.90);
+    border-bottom-color: rgba(22,163,74,.20);
+  }
+  .light .editor {
+    background: #ffffff;
+    border-color: rgba(22,163,74,.20);
+  }
+  .light .editor-hdr { border-bottom-color: rgba(22,163,74,.18); }
+  .light .gutter {
+    background: #f0fdf4;
+    border-right-color: rgba(22,163,74,.18);
+    color: #86efac;
+  }
+  .light .inline-box {
+    background: rgba(240,253,250,.80);
+    border-color: rgba(13,148,136,.25);
+  }
+  .light .cmt { color: #16a34a; }
+  .light .kv  { color: #0369a1; }
+  .light .val { color: #0f172a; }
+  .light .hr  { border-bottom-color: rgba(22,163,74,.20); }
+  .light .seg { border-color: rgba(13,148,136,.35); }
+  .light .seg button.active { background: rgba(13,148,136,.15); }
+  .light .rows-ctrl { border-color: rgba(13,148,136,.35); background: rgba(13,148,136,.06); }
+  .light .rows-ctrl button { background: rgba(255,255,255,.8); border-color: rgba(13,148,136,.30); color: #0f172a; }
+  .light .desc { border-top-color: rgba(13,148,136,.25); }
+  .light .step .lbl { color: #0f172a; }
+  .light .step .num { color: #ffffff; }
+
+  .light .stepper-track { background: rgba(13,148,136,.18); }
+  .light .stepper-fill  { background: #0d9488; box-shadow: 0 0 0 2px rgba(13,148,136,.15); }
+  .light .step .dot { background: rgba(13,148,136,.18); border-color: rgba(13,148,136,.40); }
+  .light .step.active .dot, .light .step.done .dot {
+    background: #0d9488;
+    border-color: rgba(13,148,136,.65);
+    box-shadow: 0 0 0 3px rgba(13,148,136,.22);
+  }
+  .light .desc .title { color: #0d9488; }
+  .light .desc li { color: #0f172a; }
+
+  /* FOOTER */
+  .foot { color: var(--ink-dim); text-align:center; padding: 12px; margin-top: 14px; font-size: 12px; }
 </style>
 </head>
 <body>
 
-  <!-- ======================= TOPBAR ======================= -->
   <header class="topbar">
     <div class="brand">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
         <path d="M4 8a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2.5A2.5 2.5 0 0 1 9.5 13H6a2 2 0 0 1-2-2V8zm8 5a2 2 0 0 1 2-2h4.5a2 2 0 0 1 2 2v2.5a2 2 0 0 1-2 2H14a2 2 0 0 1-2-2V13z"/>
       </svg>
       <span>DataSynth.जनन</span>
@@ -172,103 +597,267 @@
     </div>
     <div class="controls">
       <label class="toggle">
-        <input id="themeToggle" type="checkbox" aria-label="Toggle light theme" />
+        <input id="themeToggle" type="checkbox" aria-label="Toggle light theme"/>
         <span>Light theme</span>
       </label>
     </div>
   </header>
 
-  <!-- ======================= LAYOUT ======================= -->
   <main class="layout">
 
-    <!-- ---------- SIDEBAR / TOC ---------- -->
     <aside class="sidebar" aria-label="Table of Contents">
       <div class="toc-title">Sections</div>
       <ul class="toc">
         <li><a href="#sec-intro" data-target="sec-intro">1. Introduction</a></li>
         <li><a href="#sec-how" data-target="sec-how">2. How it Works</a></li>
-        <li><a href="#sec-future" data-target="sec-future">3. Future Additions</a></li>
-        <li><a href="#sec-conclusion" data-target="sec-conclusion">4. Conclusion</a></li>
+        <li><a href="#sec-arch" data-target="sec-arch">3. Architecture</a></li>
+        <li><a href="#sec-gap" data-target="sec-gap">4. Gap Analysis</a></li>
+        <li><a href="#sec-future" data-target="sec-future">5. Future Additions</a></li>
+        <li><a href="#sec-recommend" data-target="sec-recommend">6. Positioning</a></li>
+        <li><a href="#sec-conclusion" data-target="sec-conclusion">7. Conclusion</a></li>
       </ul>
-      <div style="margin-top:10px">
-        <small>Click to jump • Active section is highlighted as you scroll</small>
-      </div>
+      <div style="margin-top:8px"><small style="color:var(--ink-dim);font-size:11px">Click to jump</small></div>
     </aside>
 
-    <!-- ---------- EDITOR-LIKE DOC ---------- -->
     <section class="editor" aria-label="Code-styled documentation">
       <div class="editor-hdr">
         <div class="filename">/docs/datasynth.जनन</div>
         <div>read-only</div>
       </div>
-
       <div class="code-wrap">
-        <!-- Line numbers -->
         <pre class="gutter" aria-hidden="true" id="gutter"></pre>
-
-        <!-- Content -->
         <div class="code" id="code">
 <span class="line cmt"># DataSynth.जनन — AI + Web Assisted Synthetic Data Generator</span>
 <span class="line"></span>
 
-<!-- INTRO -->
 <span id="sec-intro" class="line cmt"># 1) INTRODUCTION</span>
 <span class="line"><span class="kv">project</span>: <span class="val">"DataSynth.जनन"</span></span>
-<span class="line"><span class="kv">purpose</span>: <span class="val">"Generate high‑quality, privacy‑safe synthetic datasets from simple natural‑language descriptions."</span></span>
+<span class="line"><span class="kv">purpose</span>: <span class="val">"Generate high‑quality, privacy‑safe synthetic datasets from natural‑language descriptions."</span></span>
 <span class="line"><span class="kv">audience</span>: <span class="val">["Data Scientists","Analysts","Students","Developers","ML Engineers"]</span></span>
-<span class="line"><span class="kv">approach</span>: <span class="val">"Hybrid AI (LLMs) + web‑grounded knowledge → realistic & consistent data"</span></span>
+<span class="line"><span class="kv">approach</span>: <span class="val">"Hybrid AI (LLMs) + web‑grounded knowledge → realistic &amp; consistent data"</span></span>
 <span class="line cmt"># goals: reduce reliance on sensitive data; accelerate dataset creation; provide explainability</span>
 <span class="line hr"></span>
 
-<!-- HOW IT WORKS -->
 <span id="sec-how" class="line cmt"># 2) HOW IT WORKS</span>
-<span class="line"><span class="sec">## 2.1 User Input (Frontend)</span></span>
-<span class="line"><span class="kv">input.demographic</span>: <span class="val">"hi_IN | en_US | ja_JP | …"</span></span>
-<span class="line"><span class="kv">input.description</span>: <span class="val">"dataset of students in a school (upto 1000 character description)"</span></span>
-<span class="line"><span class="kv">source.mode</span>: <span class="val">"ai | web"</span></span>
-<span class="line"></span>
+<span class="line">  Choose generation mode:</span>
+<div class="inline-box" role="group" aria-label="Mode selection and stepper">
+  <div style="display:flex; align-items:center; justify-content:space-between; gap:6px; flex-wrap:wrap; margin-bottom:5px;">
+    <div class="seg" role="tablist" aria-label="Mode">
+      <button id="modeAI" class="active" role="tab" aria-selected="true" aria-controls="descPanel">AI</button>
+      <button id="modeManual" role="tab" aria-selected="false" aria-controls="descPanel">Manual</button>
+    </div>
+    <div class="rows-ctrl" role="group" aria-label="Row count">
+      <button id="rowsDec" aria-label="Decrease rows">−</button>
+      <input id="rowsVal" type="text" inputmode="numeric" value="1,000" aria-live="polite" aria-label="Rows" readonly/>
+      <button id="rowsInc" aria-label="Increase rows">+</button>
+    </div>
+  </div>
 
-<span class="line"><span class="sec">## 2.2 Schema Suggestion</span></span>
-<span class="line"><span class="kv">ai_schema</span>: <span class="val">"LLM infers relevant fields; captures implicit attributes"</span></span>
-<span class="line"><span class="kv">web_schema</span>: <span class="val">"Web sources (e.g., Wikipedia patterns) suggest domain‑accurate fields"</span></span>
-<span class="line cmt">// Example fields: ["student_id","student_name","class","subject","score","exam_date"]</span>
-<span class="line"></span>
+  <div class="stepper-wrap" aria-label="Progress">
+    <div class="stepper-track" aria-hidden="true"></div>
+    <div class="stepper-fill" id="stepperFill" aria-hidden="true"></div>
+    <div class="stepper" id="stepper">
+      <div class="step active" data-step="1" aria-label="Describe dataset" aria-current="step" tabindex="0">
+        <div class="dot"></div><div class="num">1</div><div class="lbl">Description</div>
+      </div>
+      <div class="step" data-step="2" aria-label="AI suggests schema" tabindex="0">
+        <div class="dot"></div><div class="num">2</div><div class="lbl">AI Schema</div>
+      </div>
+      <div class="step" data-step="3" aria-label="Review & edit fields" tabindex="0">
+        <div class="dot"></div><div class="num">3</div><div class="lbl">Review & Edit</div>
+      </div>
+      <div class="step" data-step="4" aria-label="Define dependencies" tabindex="0">
+        <div class="dot"></div><div class="num">4</div><div class="lbl">Dependencies</div>
+      </div>
+      <div class="step" data-step="5" aria-label="Generate N rows" tabindex="0">
+        <div class="dot"></div><div class="num">5</div><div class="lbl">Generate</div>
+      </div>
+      <div class="step" data-step="6" aria-label="Explore results" tabindex="0">
+        <div class="dot"></div><div class="num">6</div><div class="lbl">Explore</div>
+      </div>
+    </div>
+  </div>
 
-<span class="line"><span class="sec">## 2.3 Dependency Inference</span></span>
-<span class="line"><span class="kv">graph.parents</span>: <span class="val">{ "score":["class","subject"], "grade":["score"] }</span></span>
-<span class="line"><span class="kv">validation</span>: <span class="val">"Acyclic, consistent, domain‑aware checks"</span></span>
-<span class="line"></span>
-
-<span class="line"><span class="sec">## 2.4 Data Generation (Engine)</span></span>
-<span class="line"><span class="kv">mode.ai</span>: <span class="val">"LLM creates semantically coherent rows (uses dependencies)"</span></span>
-<span class="line"><span class="kv">mode.web</span>: <span class="val">"Web‑grounded values & distributions for realism"</span></span>
-<span class="line"><span class="kv">fallbacks</span>: <span class="val">"Hybrid fallbacks ensure generation succeeds"</span></span>
-<span class="line"></span>
-
-<span class="line"><span class="sec">## 2.5 Post‑Generation Intelligence</span></span>
-<span class="line"><span class="kv">visual_suggestions</span>: <span class="val">["bar","line","scatter","area","pie","radar"] with grouping/aggregations</span></span>
-<span class="line"><span class="kv">table_suggestions</span>: <span class="val">["Top students by subject","Attendance vs performance","Students at risk"]</span></span>
-<span class="line"><span class="kv">reasoning</span>: <span class="val">"Explains field choices, dependency effects, and quality score"</span></span>
-<span class="line"></span>
-
-<span class="line"><span class="sec">## 2.6 Output (Frontend)</span></span>
-<span class="line"><span class="kv">dataset.table</span>: <span class="val">"Editable grid with CSV export"</span></span>
-<span class="line"><span class="kv">charts</span>: <span class="val">"AI‑suggested visuals to explore data quickly"</span></span>
-<span class="line"><span class="kv">explainability</span>: <span class="val">"Human‑readable reasoning for trust & audits"</span></span>
+  <div id="descPanel" class="desc" aria-live="polite">
+    <div class="title">Step 1 — Description (AI mode)</div>
+    <ul>
+      <li>Write a natural-language brief (domain, geography, time horizon).</li>
+      <li>Optionally add sample records or constraints to steer realism.</li>
+      <li>Tip: Name entities (e.g., "banks in India") for better grounding.</li>
+    </ul>
+  </div>
+</div>
 <span class="line hr"></span>
 
-<!-- FUTURE -->
-<span id="sec-future" class="line cmt"># 3) FUTURE ADDITIONS</span>
-<span class="line"><span class="kv">Imputation</span>: <span class="val">["Able to transform , clean the data files (CSV & XLSX )"]</span></span>
+<span id="sec-arch" class="line cmt"># 3) ARCHITECTURE</span>
+<span class="line">  USER → Schema Choice → Fields → Generation Mode → Dependencies → Generate → Outputs</span>
+
+<div class="inline-box" aria-label="Architecture flowchart">
+  <div class="fc">
+
+    <!-- ① USER -->
+    <div class="fc-node user">👤 USER &nbsp;<span style="font-weight:400;font-size:10px;">(chooses schema type)</span></div>
+
+    <!-- shaft → fork wide -->
+    <div class="fc-arrow"><div class="shaft"></div></div>
+    <div class="fc-fork"><div class="left"></div><div class="right"></div></div>
+
+    <!-- ② AI Schema | Manual Schema — FULL WIDTH -->
+    <div class="fc-pair">
+      <div class="teal">AI Schema Creation</div>
+      <div class="rose">Manual Schema Creation</div>
+    </div>
+
+    <!-- join → shaft → arrow -->
+    <div class="fc-join"><div class="left"></div><div class="right"></div></div>
+    <div class="fc-arrow"><div class="shaft"></div><div class="head"></div></div>
+
+    <!-- ③ Dataset description (centered, ~68%) -->
+    <div class="fc-node amber" style="width:68%;">Dataset description provided by user</div>
+
+    <!-- shaft → fork wide -->
+    <div class="fc-arrow"><div class="shaft"></div></div>
+    <div class="fc-fork"><div class="left"></div><div class="right"></div></div>
+
+    <!-- ④ AI generates | User enters — FULL WIDTH -->
+    <div class="fc-pair">
+      <div class="teal" style="font-size:10.5px;">
+        AI generates fields &amp; descriptions<br>
+        <span style="opacity:.7;font-size:10px;">(editable by user)</span>
+      </div>
+      <div class="rose" style="font-size:10.5px;">
+        User enters field names<br>&amp; descriptions
+      </div>
+    </div>
+
+    <!-- join → shaft → arrow -->
+    <div class="fc-join"><div class="left"></div><div class="right"></div></div>
+    <div class="fc-arrow"><div class="shaft"></div><div class="head"></div></div>
+
+    <!-- ⑤ Select generation mode (centered ~68%) -->
+    <div class="fc-node teal" style="width:68%;">Select generation mode</div>
+
+    <!-- arrow into modes box -->
+    <div class="fc-arrow"><div class="shaft"></div><div class="head"></div></div>
+
+    <!-- ⑥ FIELD GENERATION MODES box — full width -->
+    <div class="fc-modes-wrap">
+      <div class="fc-modes-title">⚙ FIELD GENERATION MODES</div>
+      <div class="fc-modes-grid">
+        <div class="fc-mode-card">
+          <strong>AI + Web Mode</strong>
+          <span>Context aware · LLM + Web data</span>
+        </div>
+        <div class="fc-mode-card">
+          <strong>Mathematical</strong>
+          <span>Mean · Median · Variance · Range</span>
+        </div>
+        <div class="fc-mode-card">
+          <strong>Categorical</strong>
+          <span>Categories + Probabilities</span>
+        </div>
+        <div class="fc-mode-card">
+          <strong>Unique Mode</strong>
+          <span>Deduplicated unique fields</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- arrow -->
+    <div class="fc-arrow"><div class="shaft"></div><div class="head"></div></div>
+
+    <!-- ⑦ Define Dependencies (centered ~75%) -->
+    <div class="fc-node teal" style="width:75%;">Define Field Dependencies &nbsp;or&nbsp; Infer using AI</div>
+
+    <!-- arrow -->
+    <div class="fc-arrow"><div class="shaft"></div><div class="head"></div></div>
+
+    <!-- ⑧ Generate (centered ~68%) -->
+    <div class="fc-node amber" style="width:68%;">User selects number of rows &amp; clicks Generate</div>
+
+    <!-- 3-way fan -->
+    <div class="fc-arrow"><div class="shaft"></div></div>
+    <div class="fc-fan3"><div class="seg-l"></div><div class="seg-m"></div><div class="seg-r"></div></div>
+
+    <!-- 3 drop shafts + arrowheads -->
+    <div class="fc-drops">
+      <div class="fc-arrow"><div class="shaft" style="height:8px;"></div><div class="head"></div></div>
+      <div class="fc-arrow"><div class="shaft" style="height:8px;"></div><div class="head"></div></div>
+      <div class="fc-arrow"><div class="shaft" style="height:8px;"></div><div class="head"></div></div>
+    </div>
+
+    <!-- ⑨ Output cards — full width -->
+    <div class="fc-outs">
+      <div class="fc-out">
+        <strong>Dataset Reasoning</strong>
+        <span>Generated records &amp; logic</span>
+      </div>
+      <div class="fc-out">
+        <strong>Dataset Table</strong>
+        <span>Editable · Export CSV</span>
+      </div>
+      <div class="fc-out">
+        <strong>Charts &amp; Viz</strong>
+        <span>Distributions &amp; graphs</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+<span class="line hr"></span>
+
+<span id="sec-gap" class="line cmt"># 4) GAP ANALYSIS</span>
+<div class="inline-box compare-wrap" role="table" aria-label="Gap analysis comparison">
+  <table class="compare">
+    <thead>
+      <tr>
+        <th>Capability</th>
+        <th title="Mockaroo">Mockaroo</th>
+        <th title="Faker">Faker</th>
+        <th title="Synthetic Data Vault">SDV</th>
+        <th title="Gretel / Hazy">Gretel/Hazy</th>
+        <th title="This Tool">DataSynth.जनन</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>No coding required</td><td class="ok">✓</td><td class="no">✖</td><td class="no">✖</td><td class="maybe">▲</td><td class="ok">✓</td></tr>
+      <tr><td>Works w/o prod data</td><td class="ok">✓</td><td class="ok">✓</td><td class="no">✖</td><td class="no">✖</td><td class="ok">✓</td></tr>
+      <tr><td>Field dependencies</td><td class="maybe">▲ Basic</td><td class="no">✖</td><td>Stat.</td><td class="maybe">▲ Learned</td><td class="ok">✓ Semantic</td></tr>
+      <tr><td>Web‑grounded facts</td><td class="no">✖</td><td class="no">✖</td><td class="no">✖</td><td class="no">✖</td><td class="ok">✓</td></tr>
+      <tr><td>Statistical targeting</td><td class="no">✖</td><td class="no">✖</td><td class="ok">✓</td><td class="maybe">▲ Learned</td><td class="ok">✓ User‑def</td></tr>
+      <tr><td>Contextual LLM reasoning</td><td class="no">✖</td><td class="no">✖</td><td class="no">✖</td><td class="no">✖</td><td class="ok">✓</td></tr>
+      <tr><td>Enterprise privacy</td><td class="no">✖</td><td class="no">✖</td><td class="ok">✓</td><td class="ok">✓</td><td class="maybe">▲</td></tr>
+      <tr><td>Multi‑table relations</td><td class="maybe">▲ Manual</td><td class="no">✖</td><td class="ok">✓</td><td class="ok">✓</td><td class="ok">✓ Via deps</td></tr>
+    </tbody>
+  </table>
+  <div class="legend">Legend: <span class="ok">✓</span> supported &nbsp; <span class="no">✖</span> not supported &nbsp; <span class="maybe">▲</span> partial/depends</div>
+</div>
+<span class="line hr"></span>
+
+<span id="sec-future" class="line cmt"># 5) FUTURE ADDITIONS</span>
+<span class="line"><span class="kv">imputation</span>: <span class="val">["Transform, clean data files (CSV &amp; XLSX)"]</span></span>
 <span class="line"><span class="kv">advanced_generation</span>: <span class="val">["Conditional distributions","Time‑series","Multi‑table relational"]</span></span>
 <span class="line"><span class="kv">enterprise_compliance</span>: <span class="val">["Differential privacy","Risk scoring","Domain templates"]</span></span>
 <span class="line"><span class="kv">analytics_export</span>: <span class="val">["SQL","Parquet","DuckDB","Built‑in dashboards"]</span></span>
-<span class="line"><span class="kv">ai_enhancements</span>: <span class="val">["refined models","Bias & fairness tests","Anomaly injection"]</span></span>
-<span class="line"><span class="kv">platform</span>: <span class="val">["Accounts","Collaboration","Public API"]</span></span>
-<span class="line"></span>
+<span class="line"><span class="kv">qualitative_and_quantitative</span>: <span class="val">["Refined models","Bias &amp; fairness tests","Anomaly injection"]</span></span>
+<span class="line"><span class="kv">platform</span>: <span class="val">["Accounts (statefulness)","Collaboration","Public API"]</span></span>
+<span class="line hr"></span>
 
-<!-- CONCLUSION -->
-<span id="sec-conclusion" class="line cmt"># 4) CONCLUSION</span>
+<span id="sec-recommend" class="line cmt"># 6) RECOMMENDED POSITIONING</span>
+<span class="line">  "The first synthetic data generator that thinks like a domain expert—combining</span>
+<span class="line">   web knowledge, LLM reasoning, and statistical control to create datasets that</span>
+<span class="line">   are contextually coherent, factually grounded, and mathematically valid."</span>
+<span class="line"></span>
+<span class="line">  Target users:</span>
+<span class="line">   - AI/ML teams needing training data for new domains without existing datasets</span>
+<span class="line">   - QA engineers requiring realistic test data with complex business logic</span>
+<span class="line">   - Data scientists prototyping in regulated industries (healthcare, finance)</span>
+<span class="line">   - Product teams building demos and POCs without data engineering support</span>
+<span class="line"></span>
+<span class="line">  Unique value: intersection of accessibility, intelligence, and control.</span>
+<span class="line hr"></span>
+
+<span id="sec-conclusion" class="line cmt"># 7) CONCLUSION</span>
 <span class="line"><span class="kv">summary</span>: <span class="val">"From idea → schema → data → insight, with explainability at every step."</span></span>
         </div>
       </div>
@@ -278,35 +867,28 @@
   <footer class="foot">Toggle theme anytime · Click TOC headers to navigate</footer>
 
 <script>
-  // ======================= THEME TOGGLE =======================
+  // THEME
   const toggle = document.getElementById('themeToggle');
   const LS_KEY = 'datasynth-docs-theme';
-  const stored = localStorage.getItem(LS_KEY);
-  if (stored === 'light') {
-    document.documentElement.classList.add('light');
-    toggle.checked = true;
-  }
+  try {
+    const stored = localStorage.getItem(LS_KEY);
+    if (stored === 'light') { document.documentElement.classList.add('light'); toggle.checked = true; }
+  } catch(e){}
   toggle.addEventListener('change', () => {
-    if (toggle.checked) {
-      document.documentElement.classList.add('light');
-      localStorage.setItem(LS_KEY, 'light');
-    } else {
-      document.documentElement.classList.remove('light');
-      localStorage.setItem(LS_KEY, 'dark');
-    }
+    if (toggle.checked) { document.documentElement.classList.add('light'); try{localStorage.setItem(LS_KEY,'light')}catch(e){} }
+    else { document.documentElement.classList.remove('light'); try{localStorage.setItem(LS_KEY,'dark')}catch(e){} }
   });
 
-  // ======================= LINE NUMBERS =======================
+  // LINE NUMBERS
   function numberLines() {
-    const code = document.getElementById('code').innerText.split('\n').length;
-    document.getElementById('gutter').textContent =
-      Array.from({length: code}, (_,i)=> String(i+1)).join('\n');
+    const n = document.getElementById('code').innerText.split('\n').length;
+    document.getElementById('gutter').textContent = Array.from({length:n},(_,i)=>String(i+1)).join('\n');
   }
   numberLines();
   window.addEventListener('resize', numberLines);
 
-  // ======================= TOC ACTIVE HIGHLIGHT =======================
-  const sectionIds = ['sec-intro','sec-how','sec-future','sec-conclusion'];
+  // TOC ACTIVE
+  const sectionIds = ['sec-intro','sec-how','sec-arch','sec-gap','sec-future','sec-recommend','sec-conclusion'];
   const links = Array.from(document.querySelectorAll('.toc a'));
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
@@ -316,62 +898,106 @@
       }
     });
   }, { rootMargin: '-20% 0px -70% 0px', threshold: 0.01 });
+  sectionIds.forEach(id => { const el = document.getElementById(id); if (el) observer.observe(el); });
+  links.forEach(a => a.addEventListener('click', () => { links.forEach(x => x.classList.remove('active')); a.classList.add('active'); }));
 
-  sectionIds.forEach(id => {
-    const el = document.getElementById(id);
-    if (el) observer.observe(el);
-  });
-  links.forEach(a => a.addEventListener('click', () => {
-    links.forEach(x => x.classList.remove('active'));
-    a.classList.add('active');
-  }));
-
-  // ======================= DYNAMIC TYPING FOR '#' LINES =======================
-  // Finds all code lines that begin with '#', preserves their text, then types them out.
+  // TYPING ANIMATION
   (function typeHashHeadlinesOnce(){
-    // Only once per tab session; remove the next 2 lines if you want it every reload.
-    if (sessionStorage.getItem('typed-headers-done') === '1') return;
-
+    try { if (sessionStorage.getItem('typed-headers-done')==='1') return; } catch(e){}
     const allLines = Array.from(document.querySelectorAll('#code .line'));
     const targets = allLines.filter(line => line.textContent.trim().startsWith('#'));
     if (!targets.length) return;
-
-    // store original text and clear for typing
-    targets.forEach(el => {
-      el.dataset.full = el.textContent;  // keep the intended text
-      el.textContent = '';               // blank to start typing
-    });
-
-    // type each target sequentially
-    const baseDelay = 18;      // ms per character
-    const gapBetween = 220;    // ms gap between lines
-
+    targets.forEach(el => { el.dataset.full = el.textContent; el.textContent = ''; });
+    const baseDelay = 16;
+    const gapBetween = 200;
     const typeLine = (el, done) => {
-      const txt = el.dataset.full || '';
-      let i = 0;
-      el.classList.add('typing');    // show caret
+      const txt = el.dataset.full || ''; let i = 0;
+      el.classList.add('typing');
       const timer = setInterval(() => {
-        el.textContent = txt.slice(0, i);
-        i++;
-        if (i > txt.length) {
-          clearInterval(timer);
-          el.classList.remove('typing');
-          setTimeout(done, gapBetween);
-        }
+        el.textContent = txt.slice(0, i); i++;
+        if (i > txt.length) { clearInterval(timer); el.classList.remove('typing'); setTimeout(done, gapBetween); }
       }, baseDelay);
     };
-
-    // chain typing in sequence
     let idx = 0;
     const next = () => {
-      if (idx >= targets.length) {
-        sessionStorage.setItem('typed-headers-done','1'); // mark complete
-        return;
-      }
+      if (idx >= targets.length) { try{sessionStorage.setItem('typed-headers-done','1')}catch(e){}; return; }
       typeLine(targets[idx++], next);
     };
     next();
   })();
+
+  // STEPPER
+  const stepper = document.getElementById('stepper');
+  const fill = document.getElementById('stepperFill');
+  const modeAI = document.getElementById('modeAI');
+  const modeManual = document.getElementById('modeManual');
+  const descPanel = document.getElementById('descPanel');
+  let currentStep = 1;
+  let currentMode = 'ai';
+
+  const DESCRIPTIONS = {
+    ai: {
+      1:{t:'Step 1 — Description (AI mode)',d:['Write a natural-language brief (domain, geography, time horizon).','Optionally add sample records or constraints to steer realism.','Tip: Name entities (e.g., "banks in India") for better grounding.']},
+      2:{t:'Step 2 — AI Schema',d:['LLM proposes fields with blurbs and default generators.','Detects data types (ID, Categorical, Numeric, Date, Text).','Auto-suggests distributions for categorical/continuous values.']},
+      3:{t:'Step 3 — Review & Edit',d:['Edit field names, descriptions, data types, and per-field generators.','Mark columns as Unique, Nullable, or Derived.','Set ranges, regex masks, and formatters.']},
+      4:{t:'Step 4 — Dependencies',d:['Define Tree + Matrix dependencies; cycles are prevented.','Example: City → State → Country; Amount depends on Plan.','Derived fields can reference earlier columns.']},
+      5:{t:'Step 5 — Generate',d:['Generate N rows using merged AI + Stats engine (web-grounded facts).','Numeric targets + categorical proportions honored.','Rows respect uniqueness and constraints.']},
+      6:{t:'Step 6 — Explore',d:['Inline dataset table supports quick edits.','Charts highlight distributions and anomalies.','Reasoning panel explains "why/how" for generated patterns.']}
+    },
+    manual: {
+      1:{t:'Step 1 — Description (Manual mode)',d:['Outline the dataset purpose and business rules.','Plan columns and constraints up-front for clarity.','Optional: import a CSV header as a starting schema.']},
+      2:{t:'Step 2 — Manual Schema',d:['Create fields manually and set precise data types.','Choose generators: Categorical list, Numeric ranges, AI+Web for text.','Mark Unique / Nullable and add format masks.']},
+      3:{t:'Step 3 — Edit & Targets',d:['Define categorical weights and numeric distributions.','Add validation rules (min/max, regex, referential checks).','Preview a small sample before full generation.']},
+      4:{t:'Step 4 — Dependencies',d:['Build dependency tree; tune conditional distributions.','Use matrix to encode cross-field rules (e.g., Plan x Region).','Enforce acyclic graph for stability.']},
+      5:{t:'Step 5 — Generate',d:['Generate N rows; disable AI text for strict deterministic output.','Export to CSV/Parquet; repeat with different seeds.','Optionally save schema as a reusable template.']},
+      6:{t:'Step 6 — Explore',d:['Edit in the grid; export patches.','Quick charts for sanity checks.','Download final dataset + schema.']}
+    }
+  };
+
+  function renderDesc(){
+    const meta = DESCRIPTIONS[currentMode][currentStep];
+    if (!meta) return;
+    descPanel.innerHTML = `<div class="title">${meta.t}</div><ul>${meta.d.map(s=>`<li>${s}</li>`).join('')}</ul>`;
+  }
+  function updateStepper(step){
+    currentStep = step;
+    const steps = Array.from(stepper.querySelectorAll('.step'));
+    steps.forEach((s,i)=>{
+      const isActive = i+1===step, isDone = i+1<step;
+      s.classList.toggle('active',isActive); s.classList.toggle('done',isDone);
+      if(isActive) s.setAttribute('aria-current','step'); else s.removeAttribute('aria-current');
+    });
+    const pct = ((step-1)/(steps.length-1))*100;
+    fill.style.width = `${pct}%`;
+    renderDesc();
+  }
+  stepper.addEventListener('click',(e)=>{ const node=e.target.closest('.step'); if(!node)return; updateStepper(parseInt(node.dataset.step,10)); });
+  stepper.querySelectorAll('.step').forEach(s=>{
+    s.addEventListener('keydown',(e)=>{
+      if(e.key==='Enter'||e.key===' '){e.preventDefault();updateStepper(parseInt(s.dataset.step,10));}
+      if(e.key==='ArrowRight'){e.preventDefault();updateStepper(Math.min(6,currentStep+1));}
+      if(e.key==='ArrowLeft'){e.preventDefault();updateStepper(Math.max(1,currentStep-1));}
+    });
+  });
+  function setMode(mode){
+    currentMode = mode;
+    modeAI.classList.toggle('active', mode==='ai'); modeAI.setAttribute('aria-selected', String(mode==='ai'));
+    modeManual.classList.toggle('active', mode==='manual'); modeManual.setAttribute('aria-selected', String(mode==='manual'));
+    renderDesc();
+  }
+  modeAI.addEventListener('click',()=>setMode('ai'));
+  modeManual.addEventListener('click',()=>setMode('manual'));
+  updateStepper(1); setMode('ai');
+
+  // ROWS CONTROL
+  const rowsVal=document.getElementById('rowsVal'),rowsInc=document.getElementById('rowsInc'),rowsDec=document.getElementById('rowsDec');
+  const clamp=(n,min,max)=>Math.max(min,Math.min(max,n));
+  function fmt(n){return n.toLocaleString('en-IN');}
+  function parseRaw(v){return parseInt((v||'').replace(/[, ]/g,''),10)||0;}
+  function setRows(n){rowsVal.value=fmt(clamp(n,10,1000000));}
+  rowsInc.addEventListener('click',()=>setRows(parseRaw(rowsVal.value)+100));
+  rowsDec.addEventListener('click',()=>setRows(parseRaw(rowsVal.value)-100));
+  setRows(1000);
 </script>
 </body>
 </html>
